@@ -240,3 +240,104 @@ input[type="submit"]:hover {
         flex-direction: row; /* Align buttons horizontally on larger screens */
     }
 }
+
+/* Delete Button Styling */
+.delete-button {
+    background-color: #dc3545; /* Red color */
+}
+
+.delete-button:hover {
+    background-color: #c82333; /* Darker red on hover */
+}
+
+.delete-button:active {
+    background-color: #bd2130; /* Even darker red on click */
+}
+
+/* Report Section Styling */
+.report-section {
+    margin-top: 40px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.report-section h3 {
+    margin-bottom: 15px;
+}
+
+.report-section h4 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.report-section ul {
+    list-style-type: disc;
+    margin-left: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.report-section p {
+    margin: 5px 0;
+}
+
+/* Delete Button Styling */
+.delete-button {
+    background-color: #dc3545; /* Red color */
+    color: #fff; /* Ensure text is readable */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+    background-color: #c82333; /* Darker red on hover */
+}
+
+.delete-button:active {
+    background-color: #bd2130; /* Even darker red on click */
+}
+
+/* Delete Button Container using Flexbox */
+.delete-button-container {
+    display: flex;
+    justify-content: flex-end; /* Aligns the button to the right */
+    margin-top: 20px; /* Adds space above the button */
+}
+
+/* Alert Container */
+.alert-container {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #f5c6cb;
+    border-radius: 5px;
+    background-color: #f8d7da;
+}
+
+/* Alert List */
+.alert-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+/* Alert Item */
+.alert-item {
+    padding: 10px 0;
+    border-bottom: 1px solid #f5c6cb;
+}
+
+.alert-item:last-child {
+    border-bottom: none;
+}
+
+/* No Alerts Message */
+.no-alerts {
+    color: #6c757d;
+    font-style: italic;
+}

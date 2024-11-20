@@ -1,14 +1,19 @@
 import os
 import psycopg2
-from psycopg2 import sql
-from psycopg2 import errors
-from datetime import datetime, timedelta
+from psycopg2 import sql, errors
+from psycopg2.extras import RealDictCursor
 import pandas as pd
 import matplotlib.pyplot as plt
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
+import logging
 
 # Load environment variables from .env file
 load_dotenv()
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class SistemaMonitoramentoColmeias:
     def __init__(self):
@@ -22,15 +27,15 @@ class SistemaMonitoramentoColmeias:
                 port=os.getenv('DB_PORT')
             )
             self.conn.autocommit = False  # Enable manual transaction management
-            print("Database connection established.")
+            logger.info("Database connection established.")
             self.criar_tabelas()
         except Exception as e:
-            print(f"Error connecting to the database: {e}")
+            logger.error(f"Error connecting to the database: {e}")
             self.conn = None  # Ensure conn exists even if connection fails
 
     def criar_tabelas(self):
         if not self.conn:
-            print("No database connection. Tables not created.")
+            logger.info("No database connection. Tables not created.")
             return
 
         cursor = self.conn.cursor()
@@ -72,102 +77,183 @@ class SistemaMonitoramentoColmeias:
             )''')
             
             self.conn.commit()
-            print("Tables created or verified.")
+            logger.info("Tables created or verified.")
         except Exception as e:
             self.conn.rollback()
-            print(f"Error creating tables: {e}")
+            logger.error(f"Error creating tables: {e}")
         finally:
             cursor.close()
+
+    def listar_colmeias(self):
+        if not self.conn:
+            logger.info("No database connection. Cannot list colmeias.")
+            return []
+        
+        try:
+            with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+                cur.execute("SELECT id, codigo, localizacao, data_instalacao, status FROM colmeias ORDER BY codigo")
+                colmeias = cur.fetchall()
+            return colmeias
+        except Exception as e:
+            logger.error(f"Erro ao listar colmeias: {e}")
+            return []
+
+    def get_colmeia_by_id(self, colmeia_id):
+        if not self.conn:
+            logger.info("No database connection. Cannot get colmeia.")
+            return None
+        
+        try:
+            with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+                cur.execute("SELECT id, codigo, localizacao, data_instalacao, status FROM colmeias WHERE id = %s", (colmeia_id,))
+                colmeia = cur.fetchone()
+            return colmeia
+        except Exception as e:
+            logger.error(f"Erro ao obter colmeia por ID: {e}")
+            return None
+
+    def get_inspecoes_by_colmeia_id(self, colmeia_id):
+        if not self.conn:
+            logger.info("No database connection. Cannot get inspeções.")
+            return []
+        
+        try:
+            with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+                cur.execute("""
+                    SELECT id, data_inspecao, temperatura, umidade, presenca_pragas, estado_geral, observacoes
+                    FROM inspecoes
+                    WHERE colmeia_id = %s
+                    ORDER BY data_inspecao DESC
+                """, (colmeia_id,))
+                inspecoes = cur.fetchall()
+            return inspecoes
+        except Exception as e:
+            logger.error(f"Erro ao obter inspeções: {e}")
+            return []
+
+    def get_producoes_by_colmeia_id(self, colmeia_id):
+        if not self.conn:
+            logger.info("No database connection. Cannot get produções.")
+            return []
+        
+        try:
+            with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+                cur.execute("""
+                    SELECT id, data_coleta, quantidade_mel, qualidade
+                    FROM producao
+                    WHERE colmeia_id = %s
+                    ORDER BY data_coleta DESC
+                """, (colmeia_id,))
+                producoes = cur.fetchall()
+            return producoes
+        except Exception as e:
+            logger.error(f"Erro ao obter produções: {e}")
+            return []
 
     def registrar_colmeia(self, codigo, localizacao):
         if not self.conn:
-            print("No database connection. Cannot register colmeia.")
+            logger.info("No database connection. Cannot register colmeia.")
             return False
 
-        cursor = self.conn.cursor()
         try:
-            cursor.execute('''
-            INSERT INTO colmeias (codigo, data_instalacao, localizacao, status)
-            VALUES (%s, %s, %s, %s)
-            ''', (codigo, datetime.now().date(), localizacao, 'ativa'))
+            with self.conn.cursor() as cur:
+                cur.execute("""
+                    INSERT INTO colmeias (codigo, data_instalacao, localizacao, status)
+                    VALUES (%s, %s, %s, %s)
+                """, (codigo, datetime.now().date(), localizacao, 'ativa'))
             self.conn.commit()
-            print(f"Colmeia {codigo} registrada com sucesso.")
+            logger.info(f"Colmeia {codigo} registrada com sucesso.")
             return True
-        except psycopg2.IntegrityError as e:
+        except errors.UniqueViolation as e:
             self.conn.rollback()
-            if isinstance(e, errors.UniqueViolation):
-                print(f"Erro ao registrar colmeia: Código '{codigo}' já existe.")
-            else:
-                print(f"Erro ao registrar colmeia: {e}")
+            logger.error(f"Erro: O código '{codigo}' já está em uso.")
             return False
         except Exception as e:
             self.conn.rollback()
-            print(f"Unexpected error ao registrar colmeia: {e}")
+            logger.error(f"Unexpected error ao registrar colmeia: {e}")
             return False
-        finally:
-            cursor.close()
 
     def registrar_inspecao(self, colmeia_id, temperatura, umidade, presenca_pragas, estado_geral, observacoes):
         if not self.conn:
-            print("No database connection. Cannot register inspeção.")
+            logger.info("No database connection. Cannot register inspeção.")
             return False
 
-        cursor = self.conn.cursor()
         try:
-            cursor.execute('''
-            INSERT INTO inspecoes (colmeia_id, data_inspecao, temperatura, umidade, 
-                                 presenca_pragas, estado_geral, observacoes)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-            ''', (colmeia_id, datetime.now().date(), temperatura, umidade, 
-                  presenca_pragas, estado_geral, observacoes))
+            with self.conn.cursor() as cur:
+                cur.execute("""
+                    INSERT INTO inspecoes (colmeia_id, data_inspecao, temperatura, umidade, presenca_pragas, estado_geral, observacoes)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """, (
+                    colmeia_id,
+                    datetime.now().date(),
+                    temperatura,
+                    umidade,
+                    presenca_pragas,
+                    estado_geral,
+                    observacoes
+                ))
             self.conn.commit()
-            print(f"Inspeção registrada para colmeia ID {colmeia_id}.")
+            logger.info(f"Inspeção registrada para colmeia ID {colmeia_id}.")
             return True
         except psycopg2.IntegrityError as e:
             self.conn.rollback()
-            print(f"Erro ao registrar inspeção: {e}")
+            logger.error(f"Erro ao registrar inspeção: {e}")
             return False
         except Exception as e:
             self.conn.rollback()
-            print(f"Unexpected error ao registrar inspeção: {e}")
+            logger.error(f"Unexpected error ao registrar inspeção: {e}")
             return False
-        finally:
-            cursor.close()
 
     def registrar_producao(self, colmeia_id, quantidade_mel, qualidade):
         if not self.conn:
-            print("No database connection. Cannot register produção.")
+            logger.info("No database connection. Cannot register produção.")
             return False
 
-        cursor = self.conn.cursor()
         try:
-            cursor.execute('''
-            INSERT INTO producao (colmeia_id, data_coleta, quantidade_mel, qualidade)
-            VALUES (%s, %s, %s, %s)
-            ''', (colmeia_id, datetime.now().date(), quantidade_mel, qualidade))
+            with self.conn.cursor() as cur:
+                cur.execute("""
+                    INSERT INTO producao (colmeia_id, data_coleta, quantidade_mel, qualidade)
+                    VALUES (%s, %s, %s, %s)
+                """, (
+                    colmeia_id,
+                    datetime.now().date(),
+                    quantidade_mel,
+                    qualidade
+                ))
             self.conn.commit()
-            print(f"Produção registrada para colmeia ID {colmeia_id}.")
+            logger.info(f"Produção registrada para colmeia ID {colmeia_id}.")
             return True
-        except psycopg2.IntegrityError as e:
+        except errors.ForeignKeyViolation as e:
             self.conn.rollback()
-            if isinstance(e, errors.ForeignKeyViolation):
-                print(f"Erro ao registrar produção: Colmeia ID {colmeia_id} não existe.")
-            else:
-                print(f"Erro ao registrar produção: {e}")
+            logger.error(f"Erro: A colmeia ID '{colmeia_id}' não existe.")
             return False
         except Exception as e:
             self.conn.rollback()
-            print(f"Unexpected error ao registrar produção: {e}")
+            logger.error(f"Unexpected error ao registrar produção: {e}")
             return False
-        finally:
-            cursor.close()
+
+    def deletar_colmeia(self, colmeia_id):
+        if not self.conn:
+            logger.info("No database connection. Cannot delete colmeia.")
+            return False
+        
+        try:
+            with self.conn.cursor() as cur:
+                # Delete the Colmeia; related inspecoes and producao will be deleted due to ON DELETE CASCADE
+                cur.execute("DELETE FROM colmeias WHERE id = %s", (colmeia_id,))
+            self.conn.commit()
+            logger.info(f"Colmeia ID {colmeia_id} e seus dados foram deletados com sucesso.")
+            return True
+        except Exception as e:
+            self.conn.rollback()
+            logger.error(f"Erro ao deletar colmeia: {e}")
+            return False
 
     def gerar_relatorio_producao(self):
         if not self.conn:
-            print("No database connection. Cannot generate relatório.")
+            logger.info("No database connection. Cannot generate relatório.")
             return
 
-        cursor = self.conn.cursor()
         try:
             query = '''
             SELECT c.codigo, p.data_coleta, p.quantidade_mel
@@ -177,80 +263,60 @@ class SistemaMonitoramentoColmeias:
             '''
             df = pd.read_sql_query(query, self.conn)
             
+            # Check if DataFrame is empty
+            if df.empty:
+                logger.info("Nenhuma produção registrada para gerar o relatório.")
+                return
+            
+            # Ensure the directory exists
+            os.makedirs('static/relatorios/', exist_ok=True)
+            
             # Gerar gráfico de produção
             plt.figure(figsize=(10, 6))
             for codigo in df['codigo'].unique():
-                dados_colmeia = df[df['codigo'] == codigo]
-                plt.plot(dados_colmeia['data_coleta'], 
-                        dados_colmeia['quantidade_mel'], 
-                        label=f'Colmeia {codigo}')
+                df_colmeia = df[df['codigo'] == codigo]
+                plt.plot(df_colmeia['data_coleta'], df_colmeia['quantidade_mel'], marker='o', label=codigo)
             
             plt.title('Produção de Mel por Colmeia')
             plt.xlabel('Data')
             plt.ylabel('Quantidade de Mel (kg)')
-            plt.legend()
+            plt.legend(title='Colmeias')
             plt.grid(True)
-            plt.savefig('relatorio_producao.png')
+            plt.tight_layout()
+            
+            # Save the plot
+            plt.savefig('static/relatorios/relatorio_producao.png')
             plt.close()
-            print("Relatório de produção gerado.")
+            logger.info("Relatório de produção gerado e salvo em 'static/relatorios/relatorio_producao.png'.")
         except Exception as e:
             self.conn.rollback()
-            print(f"Erro ao gerar relatório de produção: {e}")
-        finally:
-            cursor.close()
+            logger.error(f"Erro ao gerar relatório de produção: {e}")
 
     def verificar_alertas(self):
         if not self.conn:
-            print("No database connection. Cannot verificar alertas.")
+            logger.info("No database connection. Cannot verificar alertas.")
             return []
-
-        cursor = self.conn.cursor()
+        
         try:
             data_limite = (datetime.now() - timedelta(days=15)).date()
             
-            query = '''
-            SELECT c.codigo, MAX(i.data_inspecao) as ultima_inspecao
-            FROM colmeias c
-            LEFT JOIN inspecoes i ON c.id = i.colmeia_id
-            GROUP BY c.id
-            HAVING MAX(i.data_inspecao) < %s OR MAX(i.data_inspecao) IS NULL
-            '''
-            
-            cursor.execute(query, (data_limite,))
-            results = cursor.fetchall()
-            print(f"Alertas verificados: {results}")
+            with self.conn.cursor(cursor_factory=RealDictCursor) as cur:
+                cur.execute("""
+                    SELECT c.codigo, MAX(i.data_inspecao) AS ultima_inspecao
+                    FROM colmeias c
+                    LEFT JOIN inspecoes i ON c.id = i.colmeia_id
+                    GROUP BY c.id
+                    HAVING MAX(i.data_inspecao) < %s OR MAX(i.data_inspecao) IS NULL
+                """, (data_limite,))
+                results = cur.fetchall()
+            logger.info(f"Alertas verificados: {results}")
             return results
         except Exception as e:
             self.conn.rollback()
-            print(f"Erro ao verificar alertas: {e}")
+            logger.error(f"Erro ao verificar alertas: {e}")
             return []
-        finally:
-            cursor.close()
 
     def __del__(self):
         if hasattr(self, 'conn') and self.conn:
             self.conn.close()
-            print("Database connection closed.")
-
-    def listar_colmeias(self):
-        if not self.conn:
-            print("No database connection. Cannot list colmeias.")
-            return []
-        
-        cursor = self.conn.cursor()
-        colmeias = []
-        try:
-            cursor.execute("SELECT id, codigo, localizacao FROM colmeias ORDER BY codigo")
-            rows = cursor.fetchall()
-            colmeias = [{'id': row[0], 'codigo': row[1], 'localizacao': row[2]} for row in rows]
-        except Exception as e:
-            print(f"Erro ao listar colmeias: {e}")
-        finally:
-            cursor.close()
-        
-        return colmeias
-
-# Example usage
-if __name__ == "__main__":
-    sistema = SistemaMonitoramentoColmeias()
-    sistema.verificar_alertas()
+            logger.info("Database connection closed.")

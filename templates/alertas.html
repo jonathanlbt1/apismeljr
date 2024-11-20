@@ -2,14 +2,20 @@
 
 {% block content %}
     <h2>Alertas</h2>
+    
     {% if alertas %}
-        <ul>
-            {% for alerta in alertas %}
-                <li>Colmeia {{ alerta.codigo }} - Última inspeção em {{ alerta.ultima_inspecao }}</li>
-            {% endfor %}
-        </ul>
+        <div class="alert-container">
+            <ul class="alert-list">
+                {% for alerta in alertas %}
+                    <li class="alert-item">
+                        <strong>Colmeia {{ alerta.codigo }}</strong> - Última inspeção em {{ alerta.ultima_inspecao }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
     {% else %}
-        <p>Sem alertas no momento.</p>
+        <p class="no-alerts">Sem alertas no momento.</p>
     {% endif %}
+    
     <a href="{{ url_for('index') }}" class="button">Voltar</a>
 {% endblock %}

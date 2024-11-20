@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Relatórios</h2>
+    
+    {% if colmeias %}
+        <form method="POST" action="{{ url_for('relatorios') }}">
+            <div class="form-group">
+                <label for="colmeia_id">Selecione uma Colmeia:</label>
+                <select id="colmeia_id" name="colmeia_id" required>
+                    <option value="" disabled selected>-- Selecione uma Colmeia --</option>
+                    {% for cm in colmeias %}
+                        <option value="{{ cm.id }}">{{ cm.codigo }} - {{ cm.localizacao }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="button">Gerar Relatório</button>
+        </form>
+    {% endif %}
+    
+    {% if colmeia %}
+        <div class="report-section">
+            <h3>Detalhes da Colmeia: {{ colmeia.codigo }}</h3>
+            <p><strong>ID:</strong> {{ colmeia.id }}</p>
+            <p><strong>Localização:</strong> {{ colmeia.localizacao }}</p>
+            <p><strong>Data de Instalação:</strong> {{ colmeia.data_instalacao.strftime('%d/%m/%Y') }}</p>
+            
+            <h4>Inspeções Realizadas</h4>
+            {% if inspecoes %}
+                <ul>
+                    {% for inspecao in inspecoes %}
+                        <li>
+                            Data: {{ inspecao.data_inspecao.strftime('%d/%m/%Y') }},
+                            Temperatura: {{ inspecao.temperatura }}°C,
+                            Umidade: {{ inspecao.umidade }}%,
+                            Pragas: {{ 'Sim' if inspecao.presenca_pragas else 'Não' }},
+                            Estado Geral: {{ inspecao.estado_geral }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Nenhuma inspeção realizada.</p>
+            {% endif %}
+            
+            <h4>Produções</h4>
+            {% if producoes %}
+                <ul>
+                    {% for producao in producoes %}
+                        <li>
+                            Data: {{ producao.data_coleta.strftime('%d/%m/%Y') }},
+                            Quantidade de Mel: {{ producao.quantidade_mel }} kg,
+                            Qualidade: {{ producao.qualidade }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Nenhuma produção registrada.</p>
+            {% endif %}
+            
+            <!-- Delete Button Container -->
+            <div class="delete-button-container">
+                <form method="POST" action="{{ url_for('delete_colmeia', colmeia_id=colmeia.id) }}" onsubmit="return confirmDelete();">
+                    <button type="submit" class="button delete-button">Deletar Colmeia</button>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+    <a href="{{ url_for('index') }}" class="button">Voltar</a>
+{% endblock %}

@@ -30,5 +30,12 @@
         <!-- Main Content -->
         {% block content %}{% endblock %}
     </div>
+
+    <!-- JavaScript for Confirmation Popup -->
+    <script>
+        function confirmDelete() {
+            return confirm('Você tem certeza de que deseja deletar esta Colmeia e todos os seus dados? Esta ação é irreversível.');
+        }
+    </script>
 </body>
 </html>

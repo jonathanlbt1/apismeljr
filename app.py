@@ -89,5 +89,44 @@ def verificar_alertas():
         alertas = None  # Ensure alertas is None if no alerts are found
     return render_template('alertas.html', alertas=alertas)
 
+# 🆕 New Route: Relatórios Page
+@app.route('/relatorios', methods=['GET', 'POST'])
+def relatorios():
+    if request.method == 'POST':
+        colmeia_id = request.form.get('colmeia_id')
+        if not colmeia_id:
+            flash('Nenhuma Colmeia selecionada.', 'error')
+            return redirect(url_for('relatorios'))
+        
+        # Fetch Colmeia details
+        colmeia = sistema.get_colmeia_by_id(colmeia_id)
+        if not colmeia:
+            flash('Colmeia não encontrada.', 'error')
+            return redirect(url_for('relatorios'))
+        
+        # Fetch related Inspections and Productions
+        inspecoes = sistema.get_inspecoes_by_colmeia_id(colmeia_id)
+        producoes = sistema.get_producoes_by_colmeia_id(colmeia_id)
+        
+        return render_template('relatorios.html', colmeia=colmeia, inspecoes=inspecoes, producoes=producoes)
+    
+    else:
+        # GET request: Render the dropdown with all Colmeias
+        colmeias_list = sistema.listar_colmeias()
+        return render_template('relatorios.html', colmeias=colmeias_list)
+
+# 🆕 New Route: Delete Colmeia
+@app.route('/delete_colmeia/<int:colmeia_id>', methods=['POST'])
+def delete_colmeia(colmeia_id):
+    try:
+        success = sistema.deletar_colmeia(colmeia_id)
+        if success:
+            flash('Colmeia e seus dados foram deletados com sucesso.', 'success')
+        else:
+            flash('Erro ao deletar a Colmeia.', 'error')
+    except Exception as e:
+        flash(f'Erro ao deletar a Colmeia: {e}', 'error')
+    return redirect(url_for('relatorios'))
+
 if __name__ == "__main__":
     app.run(debug=True)
