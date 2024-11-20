@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Registrar Colmeia</h2>
+    <form action="{{ url_for('registrar_colmeia') }}" method="post">
+        <div class="form-group">
+            <label for="codigo">Código:</label>
+            <input type="text" id="codigo" name="codigo" title="Código da Colmeia" placeholder="Digite o código" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="localizacao">Localização:</label>
+            <input type="text" id="localizacao" name="localizacao" title="Localização da Colmeia" placeholder="Digite a localização" required>
+        </div>
+        
+        <div class="form-group">
+            <input type="submit" value="Registrar">
+        </div>
+    </form>
+    <a href="{{ url_for('index') }}" class="button">Voltar</a>
+{% endblock %}

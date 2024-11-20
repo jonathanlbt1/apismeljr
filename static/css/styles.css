@@ -194,3 +194,49 @@ input[type="submit"]:hover {
     padding: 8px;
     box-sizing: border-box;
 }
+
+/* FILE: static/css/styles.css */
+
+/* Button Styling */
+.button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+    background-color: #218838; /* Bootstrap primary color */
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.button:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+.button:active {
+    background-color: #004085; /* Even darker shade on click */
+    transform: scale(1.00); /* Reset scale on click */
+}
+
+/* Button Container Styling */
+.button-container {
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically on small screens */
+    align-items: center;    /* Center buttons horizontally */
+    justify-content: center;/* Center buttons vertically within the container */
+    gap: 15px;              /* Space between buttons */
+    margin-top: 30px;       /* Space above the button container */
+    min-height: 300px;      /* Optional: Ensures container has enough height for vertical centering */
+}
+
+/* Responsive Layout: Horizontal on Larger Screens */
+@media (min-width: 600px) {
+    .button-container {
+        flex-direction: row; /* Align buttons horizontally on larger screens */
+    }
+}

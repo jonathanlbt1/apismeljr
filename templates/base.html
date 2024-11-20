@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Monitoramento de Colmeias</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header Image -->
+        <img src="{{ url_for('static', filename='images/header.png') }}" alt="Header" class="header-image">
+        
+        <!-- Header Title -->
+        <header>
+            <h1>Sistema de Monitoramento de Colmeias</h1>
+        </header>
+        
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Main Content -->
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

@@ -1,41 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alertas</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-</head>
-<body>
-    <div class="container">
-        <!-- Display the header image -->
-        <img src="{{ url_for('static', filename='images/header.png') }}" alt="Header Image" class="header-image">
-        
-        <header>
-            <h1>Alertas</h1>
-        </header>
-        
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <ul class="flashes">
-                    {% for category, message in messages %}
-                        <li class="{{ category }}">{{ message }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        {% endwith %}
-        
-        {% if alertas and alertas != "None" and alertas|length > 0 %}
-            <ul>
-                {% for alerta in alertas %}
-                    <li>Colmeia {{ alerta[0] }}: Última inspeção em {{ alerta[1] }}</li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>Não há alertas neste momento.</p>
-        {% endif %}
-        
-        <a href="/">Voltar</a>
-    </div>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Alertas</h2>
+    {% if alertas %}
+        <ul>
+            {% for alerta in alertas %}
+                <li>Colmeia {{ alerta.codigo }} - Última inspeção em {{ alerta.ultima_inspecao }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Sem alertas no momento.</p>
+    {% endif %}
+    <a href="{{ url_for('index') }}" class="button">Voltar</a>
+{% endblock %}

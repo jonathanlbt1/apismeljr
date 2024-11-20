@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from database import SistemaMonitoramentoColmeias
 from dotenv import load_dotenv
 import os
+from datetime import datetime
+import pytz 
 
 # Load environment variables from .env file
 load_dotenv()
@@ -14,8 +16,27 @@ sistema = SistemaMonitoramentoColmeias()
 
 @app.route('/')
 def index():
+    # Define the timezone for São Paulo
+    tz = pytz.timezone('America/Sao_Paulo')
+    # Get the current date and time in São Paulo
+    now = datetime.now(tz)
+    # Format the datetime as desired (e.g., DD/MM/YYYY HH:MM)
+    current_datetime = now.strftime('%d/%m/%Y %H:%M')
+    return render_template('index.html', current_datetime=current_datetime)
+
+@app.route('/registrar_colmeia_page')
+def registrar_colmeia_page():
+    return render_template('registrar_colmeia.html')
+
+@app.route('/registrar_inspecao_page')
+def registrar_inspecao_page():
     colmeias_list = sistema.listar_colmeias()
-    return render_template('index.html', colmeias=colmeias_list)
+    return render_template('registrar_inspecao.html', colmeias=colmeias_list)
+
+@app.route('/registrar_producao_page')
+def registrar_producao_page():
+    colmeias_list = sistema.listar_colmeias()
+    return render_template('registrar_producao.html', colmeias=colmeias_list)
 
 @app.route('/registrar_colmeia', methods=['POST'])
 def registrar_colmeia():
@@ -28,7 +49,7 @@ def registrar_colmeia():
             flash('Erro ao registrar colmeia. Código já existe.', 'error')
     except Exception as e:
         flash(f'Erro ao registrar colmeia: {e}', 'error')
-    return redirect(url_for('index'))
+    return redirect(url_for('registrar_colmeia_page'))
 
 @app.route('/registrar_inspecao', methods=['POST'])
 def registrar_inspecao():
@@ -45,7 +66,7 @@ def registrar_inspecao():
             flash('Erro ao registrar inspeção.', 'error')
     except Exception as e:
         flash(f'Erro ao registrar inspeção: {e}', 'error')
-    return redirect(url_for('index'))
+    return redirect(url_for('registrar_inspecao_page'))
 
 @app.route('/registrar_producao', methods=['POST'])
 def registrar_producao():
@@ -56,10 +77,10 @@ def registrar_producao():
         if sistema.registrar_producao(colmeia_id, quantidade_mel, qualidade):
             flash('Produção registrada com sucesso!', 'success')
         else:
-            flash('Erro ao registrar produção. Verifique se a Colmeia ID está correta.', 'error')
+            flash('Erro ao registrar produção. Verifique se a Colmeia selecionada está correta.', 'error')
     except Exception as e:
         flash(f'Erro ao registrar produção: {e}', 'error')
-    return redirect(url_for('index'))
+    return redirect(url_for('registrar_producao_page'))
 
 @app.route('/verificar_alertas')
 def verificar_alertas():

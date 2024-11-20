@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Registrar Inspeção</h2>
+    <form action="{{ url_for('registrar_inspecao') }}" method="post">
+        <div class="form-group">
+            <label for="colmeia_id">Colmeia:</label>
+            <select id="colmeia_id" name="colmeia_id" title="Selecione a Colmeia" required>
+                <option value="" disabled selected>Selecione uma Colmeia</option>
+                {% for colmeia in colmeias %}
+                    <option value="{{ colmeia.id }}">{{ colmeia.codigo }} - {{ colmeia.localizacao }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="temperatura">Temperatura:</label>
+            <input type="number" step="0.1" id="temperatura" name="temperatura" title="Temperatura da Colmeia" placeholder="Digite a temperatura" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="umidade">Umidade:</label>
+            <input type="number" step="0.1" id="umidade" name="umidade" title="Umidade da Colmeia" placeholder="Digite a umidade" required>
+        </div>
+        
+        <div class="checkbox-container">
+            <label for="presenca_pragas">Presença de Pragas:</label>
+            <input type="checkbox" id="presenca_pragas" name="presenca_pragas" title="Presença de Pragas">
+        </div>
+        
+        <div class="form-group">
+            <label for="estado_geral">Estado Geral:</label>
+            <input type="text" id="estado_geral" name="estado_geral" title="Estado Geral da Colmeia" placeholder="Digite o estado geral" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="observacoes">Observações:</label>
+            <textarea id="observacoes" name="observacoes" title="Observações da Colmeia" placeholder="Digite as observações"></textarea>
+        </div>
+        
+        <div class="form-group">
+            <input type="submit" value="Registrar">
+        </div>
+    </form>
+    <a href="{{ url_for('index') }}" class="button">Voltar</a>
+{% endblock %}
