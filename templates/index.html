@@ -63,21 +63,50 @@
         
         <h2>Registrar Produção</h2>
         <form action="/registrar_producao" method="post">
-            <label for="colmeia_id_producao">Colmeia ID:</label>
-            <input type="text" id="colmeia_id_producao" name="colmeia_id" title="ID da Colmeia" placeholder="Digite o ID da colmeia" required>
+            <div class="form-group">
+                <label for="colmeia_id_producao">Colmeia:</label>
+                <select id="colmeia_id_producao" name="colmeia_id" title="Selecione a Colmeia" required>
+                    <option value="" disabled selected>Selecione uma Colmeia</option>
+                    {% for colmeia in colmeias %}
+                        <option value="{{ colmeia.id }}">{{ colmeia.codigo }} - {{ colmeia.localizacao }}</option>
+                    {% endfor %}
+                </select>
+            </div>
             
-            <label for="quantidade_mel">Quantidade de Mel:</label>
-            <input type="text" id="quantidade_mel" name="quantidade_mel" title="Quantidade de Mel" placeholder="Digite a quantidade de mel" required>
+            <div class="form-group">
+                <label for="quantidade_mel">Quantidade de Mel (kg):</label>
+                <input type="number" step="0.01" id="quantidade_mel" name="quantidade_mel" title="Quantidade de Mel" placeholder="Digite a quantidade de mel" required>
+            </div>
             
-            <label for="qualidade">Qualidade:</label>
-            <input type="text" id="qualidade" name="qualidade" title="Qualidade do Mel" placeholder="Digite a qualidade do mel" required>
+            <div class="form-group">
+                <label for="qualidade">Qualidade:</label>
+                <select id="qualidade" name="qualidade" title="Qualidade do Mel" required>
+                    <option value="" disabled selected>Selecione a Qualidade</option>
+                    <option value="Acácia">Acácia</option>
+                    <option value="Angico">Angico</option>
+                    <option value="Aroeira">Aroeira</option>
+                    <option value="Bamburral">Bamburral</option>
+                    <option value="Café">Café</option>
+                    <option value="Cajuja">Cajuja</option>
+                    <option value="Capixingui">Capixingui</option>
+                    <option value="Cipó-Uva">Cipó-Uva</option>
+                    <option value="Eucalipto">Eucalipto</option>
+                    <option value="Jitirana">Jitirana</option>
+                    <option value="Laranjeira">Laranjeira</option>
+                    <option value="Marmeleiro">Marmeleiro</option>
+                    <option value="Quitoco">Quitoco</option>
+                    <option value="Uva-Japonesa">Uva-Japonesa</option>
+                </select>
+            </div>
             
-            <input type="submit" value="Registrar">
+            <div class="form-group">
+                <input type="submit" value="Registrar">
+            </div>
         </form>
         
         <h2>Verificar Alertas</h2>
         <form action="/verificar_alertas" method="get">
-            <input type="submit" value="Verificar">
+            <input type="submit" value="Verificar Alertas">
         </form>
     </div>
 </body>

@@ -1,15 +1,21 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from database import SistemaMonitoramentoColmeias
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'
+app.secret_key = os.getenv('SECRET_KEY', 'your_default_secret_key')  # Use env var or default
 
 # Initialize the backend system
 sistema = SistemaMonitoramentoColmeias()
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    colmeias_list = sistema.listar_colmeias()
+    return render_template('index.html', colmeias=colmeias_list)
 
 @app.route('/registrar_colmeia', methods=['POST'])
 def registrar_colmeia():
@@ -33,8 +39,10 @@ def registrar_inspecao():
     estado_geral = request.form['estado_geral']
     observacoes = request.form['observacoes']
     try:
-        sistema.registrar_inspecao(colmeia_id, temperatura, umidade, presenca_pragas, estado_geral, observacoes)
-        flash('Inspeção registrada com sucesso!', 'success')
+        if sistema.registrar_inspecao(colmeia_id, temperatura, umidade, presenca_pragas, estado_geral, observacoes):
+            flash('Inspeção registrada com sucesso!', 'success')
+        else:
+            flash('Erro ao registrar inspeção.', 'error')
     except Exception as e:
         flash(f'Erro ao registrar inspeção: {e}', 'error')
     return redirect(url_for('index'))
@@ -45,8 +53,10 @@ def registrar_producao():
     quantidade_mel = request.form['quantidade_mel']
     qualidade = request.form['qualidade']
     try:
-        sistema.registrar_producao(colmeia_id, quantidade_mel, qualidade)
-        flash('Produção registrada com sucesso!', 'success')
+        if sistema.registrar_producao(colmeia_id, quantidade_mel, qualidade):
+            flash('Produção registrada com sucesso!', 'success')
+        else:
+            flash('Erro ao registrar produção. Verifique se a Colmeia ID está correta.', 'error')
     except Exception as e:
         flash(f'Erro ao registrar produção: {e}', 'error')
     return redirect(url_for('index'))
