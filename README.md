@@ -1,14 +1,16 @@
 # Apis Mel Jr
 
+![logo](static/images/logo.png)
+
 ## Descrição
 
 Este projeto se trata de uma extensão acadêmica para o terceiro semestre do curso de Engenharia de Computação. O projeto tem como objetivo ajudar um apicultor a gerenciar suas colmeias, fazendo o registro de suas colmeias e monitorando as mesmas. 
 
 ## Destaques desta Aplicação
 
-- 1. Registro de colmeias em banco de dados relacional Postgres
-- 2. Registro de inspeções para monitoramento das colméias.
-- 3. Registro de produção das abelhas
+- Registro de colmeias em banco de dados relacional Postgres
+- Registro de inspeções para monitoramento das colméias.
+- Registro de produção das abelhas
 
 ## Instalação
 
