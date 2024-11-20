@@ -1,0 +1,148 @@
+/* Reset some default browser styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-image: url('../images/background.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed; /* Makes the background image fixed when scrolling */
+    min-height: 100vh; /* Ensures the background covers the entire viewport height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    width: 70%;
+    margin: 20px auto;
+    background: rgba(255, 255, 255, 0.85); /* White background with 85% opacity for readability */
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    -webkit-backdrop-filter: blur(5px); /* Adds a subtle blur effect behind the container for Safari */
+    backdrop-filter: blur(5px); /* Adds a subtle blur effect behind the container */
+}
+
+/* Checkbox container to align label and checkbox */
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    margin: 20px 0; /* Adjust spacing as needed */
+}
+
+/* Space between label and checkbox */
+.checkbox-container label {
+    margin-right: 10px; /* Adjust spacing as needed */
+    white-space: nowrap; /* Prevent label from breaking into two lines */
+    font-weight: bold; /* Ensure label is bold */
+}
+
+/* Increase checkbox size by 20% */
+.checkbox-container input[type="checkbox"] {
+    transform: scale(1.2); /* Increases size by 20% */
+    margin: 0; /* Removes default margin */
+    cursor: pointer; /* Changes cursor to pointer on hover */
+    /* Fine-tune vertical alignment */
+    margin-top: 2px;
+}
+
+header {
+    padding: 20px 0;
+    text-align: center;
+    color: #1c530e;
+}
+
+.header-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    margin-bottom: 20px;
+}
+
+h1 {
+    margin: 0;
+    font-size: 2.5em;
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+    margin-top: 20px;
+}
+
+/* Form styling */
+form {
+    background: rgba(255, 255, 255, 0.95); /* Slightly more opaque for each form */
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+input[type="text"],
+input[type="submit"],
+input[type="checkbox"],
+textarea {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+input[type="submit"] {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+input[type="submit"]:hover {
+    background-color: #218838;
+}
+
+.flashes {
+    list-style-type: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.flashes li {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.flashes li.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.flashes li.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+a {
+    display: inline-block;
+    margin-top: 20px;
+    text-decoration: none;
+    color: #007bff;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+label {
+    font-weight: bold;
+}

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Monitoramento de Colmeias</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Display the header image -->
+        <img src="{{ url_for('static', filename='images/header.png') }}" alt="Header" class="header-image">
+        
+        <header>
+            <h1>Sistema de Monitoramento de Colmeias</h1>
+        </header>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        
+        <h2>Registrar Colmeia</h2>
+        <form action="/registrar_colmeia" method="post">
+            <label for="codigo">Código:</label>
+            <input type="text" id="codigo" name="codigo" title="Código da Colmeia" placeholder="Digite o código" required>
+            
+            <label for="localizacao">Localização:</label>
+            <input type="text" id="localizacao" name="localizacao" title="Localização da Colmeia" placeholder="Digite a localização" required>
+            
+            <input type="submit" value="Registrar">
+        </form>
+        
+        <h2>Registrar Inspeção</h2>
+        <form action="/registrar_inspecao" method="post">
+            <label for="colmeia_id">Colmeia ID:</label>
+            <input type="text" id="colmeia_id" name="colmeia_id" title="ID da Colmeia" placeholder="Digite o ID da colmeia" required>
+            
+            <label for="temperatura">Temperatura:</label>
+            <input type="text" id="temperatura" name="temperatura" title="Temperatura da Colmeia" placeholder="Digite a temperatura" required>
+            
+            <label for="umidade">Umidade:</label>
+            <input type="text" id="umidade" name="umidade" title="Umidade da Colmeia" placeholder="Digite a umidade" required>
+            
+            <div class="checkbox-container">
+                <label for="presenca_pragas">Presença de Pragas:</label>
+                <input type="checkbox" id="presenca_pragas" name="presenca_pragas" title="Presença de Pragas">
+            </div>
+            
+            <label for="estado_geral">Estado Geral:</label>
+            <input type="text" id="estado_geral" name="estado_geral" title="Estado Geral da Colmeia" placeholder="Digite o estado geral" required>
+            
+            <label for="observacoes">Observações:</label>
+            <textarea id="observacoes" name="observacoes" title="Observações da Colmeia" placeholder="Digite as observações"></textarea>
+            
+            <input type="submit" value="Registrar">
+        </form>
+        
+        <h2>Registrar Produção</h2>
+        <form action="/registrar_producao" method="post">
+            <label for="colmeia_id_producao">Colmeia ID:</label>
+            <input type="text" id="colmeia_id_producao" name="colmeia_id" title="ID da Colmeia" placeholder="Digite o ID da colmeia" required>
+            
+            <label for="quantidade_mel">Quantidade de Mel:</label>
+            <input type="text" id="quantidade_mel" name="quantidade_mel" title="Quantidade de Mel" placeholder="Digite a quantidade de mel" required>
+            
+            <label for="qualidade">Qualidade:</label>
+            <input type="text" id="qualidade" name="qualidade" title="Qualidade do Mel" placeholder="Digite a qualidade do mel" required>
+            
+            <input type="submit" value="Registrar">
+        </form>
+        
+        <h2>Verificar Alertas</h2>
+        <form action="/verificar_alertas" method="get">
+            <input type="submit" value="Verificar">
+        </form>
+    </div>
+</body>
+</html>
