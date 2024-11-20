@@ -43,10 +43,24 @@ python app.py
 
 ## Licença
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Este projeto segue o padrão de licença Apache em sua versão 2.0, conforme poderá ver na raiz no projeto.
 
 ## Agradecimentos
 
 - [https://www.instagram.com/apismeljunior/](# Apis Mel Junior)
-- [Senar - Link: https://www.gov.br/agricultura/pt-br/assuntos/ceplac/informe-ao-cacauicultor/manejo/cartilhas-senar/142-manejo-de-apiario-para-producao-de-mel.pdf](#)
-- [Resource 3](#)
+- [https://www.gov.br/agricultura/pt-br/assuntos/ceplac/informe-ao-cacauicultor/manejo/cartilhas-senar/142-manejo-de-apiario-para-producao-de-mel.pdf](# SENAR)
+- [https://www.cati.sp.gov.br/portal/themes/unify/arquivos/produtos-e-servicos/acervo-tecnico/BT_Apicultura.pdf](# CATI Boletim Técnico)
+
+## Copyright
+
+<table>
+  <tr>
+    <td>Author</td><td>Jonathan Moraes<jonathanlbt@gmail.com></td>
+  </tr>
+  <tr>
+    <td>Copyright</td><td>Copyright (c) 2024- Jonathan Moraes</td>
+  </tr>
+  <tr>
+    <td>License</td><td>Apache License, Version 2.0</td>
+  </tr>
+</table>
